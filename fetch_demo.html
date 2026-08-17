@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Demo Fetch</title>
+
+    <style>
+      table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid rgb(27, 14, 14);
+        padding: 10px;
+        text-align: center;
+      }
+
+      th {
+        background-color: lightgray;
+      }
+
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>List of Products</h1>
+
+    <table>
+      <thead>
+        <tr>
+          
+    <th>S.No.</th>
+    <th>Title</th>
+    <th>Image</th>
+    <th>Category</th>
+    <th>Rating</th>
+    <th>Price</th>
+    <th>Stock</th>
+    <th>Cart</th>
+    <th>Order</th>
+
+          
+        </tr>
+      </thead>
+
+      <tbody id="data"></tbody>
+    </table>
+
+    <script>
+      const URL = "https://dummyjson.com/products?limit=10&skip=3";
+
+      // Dollar to INR rate
+      async function getRate() {
+        try {
+          const URL = "https://open.er-api.com/v6/latest/USD";
+
+          const res = await fetch(URL);
+
+          const rateData = await res.json();
+
+          console.log("rate =", rateData.rates.INR);
+
+          return rateData.rates.INR;
+        } catch (err) {
+          console.log("Error:", err);
+        }
+      }
+
+      // Load products
+      async function loadProduct() {
+        try {
+          const res = await fetch(URL);
+
+          const data = await res.json();
+
+          console.log("data =", data.products);
+
+          // Get USD to INR rate
+          const INRrate = await getRate();
+
+          console.log("INRrate =", INRrate);
+
+          let rows = "";
+
+          data.products.map((i, index) => {
+            const priceInINR = i.price * INRrate;
+
+            rows += `
+                        <tr>
+                            <td>${index + 1}</td>
+
+                            <td>${i.title}</td>
+
+                            <td>
+                                <img 
+                                    src="${i.images[0]}" 
+                                    width="50" 
+                                    height="50"
+                                >
+                            </td>
+
+                            <td>${i.category}</td>
+
+                            <td>${i.rating}</td>
+
+                            <td>₹${priceInINR.toFixed(2)}</td>
+
+                            <td>${i.stock}</td>
+                            <td>
+                                <button onclick="addToCart(${i.id})">
+                                    Add to Cart
+                                </button>
+                            </td>
+
+                            <td>
+                                <button onclick="placeOrder(${i.id})">
+                                    Place Order
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+          });
+
+          document.getElementById("data").innerHTML = rows;
+        } catch (err) {
+          console.log("Error =", err);
+        }
+      }
+      function addToCart(productId) {
+    console.log("Product added to cart:", productId);
+    alert("Product added to cart!");
+}
+
+function placeOrder(productId) {
+    console.log("Order placed for product:", productId);
+    alert("Order placed successfully!");
+}
+
+      // Start
+      loadProduct();
+    </script>
+  </body>
+</html>
