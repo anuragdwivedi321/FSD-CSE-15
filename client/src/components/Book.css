@@ -1,0 +1,11 @@
+.book {
+
+    width: 400px;
+    height: 400px;
+    background-color: bisque;
+    border: 2px solid red;
+    border-radius: 20px;
+    text-align: center;
+    margin: 5px;
+    padding: 5px;
+}
